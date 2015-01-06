@@ -21,6 +21,8 @@
 
 #include "cube.h"
 #include "piece.h"
+#include "global.h"
+#include <stdio.h>
 #include <stdlib.h>
 piece *piece_new ( int x, int y, piece_type type )
 {
@@ -121,11 +123,28 @@ void piece_rotate ( piece* p)
 	* */
 	
 	int temp = 0, i = 0;
+    int rightover=0, leftover=0;
 	while ( i<4 )
 	{
+        //rotate transform
 		temp = p->cubes[i]->posx;
 		p->cubes[i]->posx = -p->cubes[i]->posy;
 		p->cubes[i]->posy = temp;
+
+        //Check if something is gonna poke out the left or right
+        int templeftover = -(p->posx + p->cubes[i]->posx);
+        if (leftover < templeftover) {
+            leftover = templeftover;
+        }
+        int temprightover = GRID_WIDTH - 1 - (p->posx + p->cubes[i]->posx);
+        if (temprightover < rightover) {
+            rightover = temprightover;
+        }
 		i++;
 	}
+    //If something is gonna poke out, move the piece
+    if(leftover || rightover) {
+        p->posx+=leftover+rightover;
+    }
 }
+
