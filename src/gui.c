@@ -421,8 +421,15 @@ void add_in_air_to_well ()
 
 void check_and_remove_line ()
 {
+    int lines_to_remove[GRID_HEIGHT];
+    int i=0;
+    while (i<GRID_HEIGHT) {
+        lines_to_remove[i]=0;
+        i++;
+    }
 	animation_running=1;
-	int i=0, j=GRID_HEIGHT, line_count = 0, line_flag = 0;
+    int j=GRID_HEIGHT, line_count = 0, line_flag = 0;
+    i=0;
 	while ( j>=0 )
 	{
 		i=0;
@@ -431,22 +438,29 @@ void check_and_remove_line ()
 		{
 			if ( line_flag && well [i][j]!=NULL);
 			else line_flag = 0;
-			if ( line_count )
-			{
-				well [i][j+line_count] = well [i][j];
-			}
 			i++;
 		}
 		if ( line_flag )
 		{
-			
 			animate (j);
 			animate (j);
 			animate (j);
+            lines_to_remove[j]=1;
 			line_count++;
 		}
 		j--;
 	}
+    int shift=0;
+    j=GRID_HEIGHT-1;
+    while(j>=0) {
+        i=0;
+        while(i<GRID_WIDTH) {
+            well [i][j+shift] = well [i][j];
+            i++;
+        }
+        shift+=lines_to_remove[j];
+        j--;
+    }
 	number_of_lines += line_count;
 	switch ( line_count )
 	{
